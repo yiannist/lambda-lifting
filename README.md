@@ -8,15 +8,15 @@ Compiling & Running
 
 Build it:
 
-cabal configure
-cabal build
+    cabal configure
+    cabal build
 
 Then, you can start playing by:
 
-./dist/build/Game/Game maps/contest1.map
+    ./dist/build/Game/Game maps/contest1.map
 
 Authors
 =======
 
-  Yiannis Tsiouris
-  Ilias Tsitsimpis
+Yiannis Tsiouris
+Ilias Tsitsimpis
