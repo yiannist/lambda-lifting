@@ -83,35 +83,40 @@ putExit e = do
     gs <- get
     put gs{exit = e}
 
+putFlood :: Flooding -> Game ()
+putFlood fl = do
+    gs <- get
+    put gs{flood = fl}
+
 putTramps :: Tramps -> Game ()
 putTramps t = do
-  gs <- get
-  put gs{tramps = t}
+    gs <- get
+    put gs{tramps = t}
 
 incrTurn :: Game ()
 incrTurn = do
-  gs@(GS{turn = trn}) <- get
-  put gs{turn = succ trn}
+    gs@(GS{turn = trn}) <- get
+    put gs{turn = succ trn}
 
 incMovesUnderWater :: Game ()
 incMovesUnderWater = do
-  gs@GS{movesUnderWater = muw} <- get
-  put gs{movesUnderWater = succ muw}
+    gs@GS{movesUnderWater = muw} <- get
+    put gs{movesUnderWater = succ muw}
 
 resetMovesUnderWater :: Game ()
 resetMovesUnderWater = do
-  gs <- get
-  put gs{movesUnderWater = 0}
+    gs <- get
+    put gs{movesUnderWater = 0}
 
 incRazors :: Game ()
 incRazors = do
-  gs@GS{razors = r} <- get
-  put gs{razors = succ r}
+    gs@GS{razors = r} <- get
+    put gs{razors = succ r}
 
 decRazors :: Game ()
 decRazors = do
-  gs@GS{razors = r} <- get
-  put gs{razors = pred r}
+    gs@GS{razors = r} <- get
+    put gs{razors = pred r}
 
 -- ---------------------------
 -- Cells
@@ -174,32 +179,32 @@ showCell isFlooded cell
 -- ---------------------------
 -- Game Conditions
 data GameConditions
-  = Winning
-  | Abort
-  | Losing
-  | Playing
-  deriving (Eq)
+    = Winning
+    | Abort
+    | Losing
+    | Playing
+    deriving (Eq)
 
 -- ---------------------------
 -- Movements
 data Movement
-  = MLeft
-  | MRight
-  | MUp
-  | MDown
-  | MWait
-  | MAbort
-  | MRazor
-  deriving (Eq)
+    = MLeft
+    | MRight
+    | MUp
+    | MDown
+    | MWait
+    | MAbort
+    | MRazor
+    deriving (Eq)
 
 instance Show Movement where
-  show MLeft  = "M"
-  show MRight = "R"
-  show MUp    = "U"
-  show MDown  = "D"
-  show MWait  = "W"
-  show MAbort = "A"
-  show MRazor = "S"
+    show MLeft  = "M"
+    show MRight = "R"
+    show MUp    = "U"
+    show MDown  = "D"
+    show MWait  = "W"
+    show MAbort = "A"
+    show MRazor = "S"
 
 instance Read Movement where
     -- readsPrec is the main function for parsing input
@@ -226,18 +231,18 @@ validMove = flip elem "ikjlaws"
 
 moveTo :: Dimension -> Movement -> Dimension
 moveTo (x, y) m
-  | m == MLeft  = (x-1, y)
-  | m == MRight = (x+1, y)
-  | m == MUp    = (x, y+1)
-  | m == MDown  = (x, y-1)
-  | m == MWait  = (x, y)
-  | m == MAbort = (x, y)
-  | m == MRazor = (x, y)
-  | otherwise   = error "What??"
+    | m == MLeft  = (x-1, y)
+    | m == MRight = (x+1, y)
+    | m == MUp    = (x, y+1)
+    | m == MDown  = (x, y-1)
+    | m == MWait  = (x, y)
+    | m == MAbort = (x, y)
+    | m == MRazor = (x, y)
+    | otherwise   = error "What??"
 
 inBounds :: Dimension -> Dimension -> Bool
 inBounds (x, y) (lim_x, lim_y) =
-  (1 <= x && x <= lim_x) && (1 <= y && y <= lim_y)
+    (1 <= x && x <= lim_x) && (1 <= y && y <= lim_y)
 
 -- ---------------------------
 -- Flooding state
@@ -260,11 +265,6 @@ updateWater trn fld@(F w f _) =
     if f > 0 && trn `mod` f == 0
        then fld{water = w+1}
        else fld
-
-putFlood :: Flooding -> Game ()
-putFlood fl = do
-    gs <- get
-    put gs{flood = fl}
 
 -- ---------------------------
 -- Fucking Trampolines

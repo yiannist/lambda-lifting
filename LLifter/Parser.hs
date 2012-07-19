@@ -82,26 +82,26 @@ breakContents size fld tassoc grth rzr [] = (size, fld, tassoc, grth, rzr)
 getMeta :: Flooding -> TrampAssocMap -> Growth -> Razor -> [BS.ByteString]
         -> (Flooding, TrampAssocMap, Growth, Razor)
 getMeta fld tassoc grth rzr (l:ls)
-  | BSC.null l =
-      -- EOF (meaningless empty line)
-      (fld, tassoc, grth, rzr)
-  | head unp == "Trampoline" =
-      -- Must be Trampoline meta!
-      let ["Trampoline", [name], "targets", [target]] = unp
-          name'   = fromIntegral $ ord name
-          target' = fromIntegral $ ord target
-      in getMeta fld ((name',target'):tassoc) grth rzr ls
-  | otherwise =
-      -- Must be Flood/Beard meta!
-      let [name, valueS] = unp
-          value = read valueS
-      in
-      case name of
-        "Water"      -> getMeta (putWater      value fld) tassoc grth rzr ls
-        "Flooding"   -> getMeta (putFlooding   value fld) tassoc grth rzr ls
-        "Waterproof" -> getMeta (putWaterProof value fld) tassoc grth rzr ls
-        "Growth"     -> getMeta fld                       tassoc value  rzr ls
-        "Razors"     -> getMeta fld                       tassoc grth value ls
-        _            -> error "WAT??"
+    | BSC.null l =
+        -- EOF (meaningless empty line)
+        (fld, tassoc, grth, rzr)
+    | head unp == "Trampoline" =
+        -- Must be Trampoline meta!
+        let ["Trampoline", [name], "targets", [target]] = unp
+            name'   = fromIntegral $ ord name
+            target' = fromIntegral $ ord target
+        in getMeta fld ((name',target'):tassoc) grth rzr ls
+    | otherwise =
+        -- Must be Flood/Beard meta!
+        let [name, valueS] = unp
+            value = read valueS
+        in
+        case name of
+            "Water"      -> getMeta (putWater      value fld) tassoc grth rzr ls
+            "Flooding"   -> getMeta (putFlooding   value fld) tassoc grth rzr ls
+            "Waterproof" -> getMeta (putWaterProof value fld) tassoc grth rzr ls
+            "Growth"     -> getMeta fld                       tassoc value  rzr ls
+            "Razors"     -> getMeta fld                       tassoc grth value ls
+            _            -> error "WAT??"
   where unp = words $ BSC.unpack l
 getMeta fld tassoc grth rzr [] = (fld, tassoc, grth, rzr)
