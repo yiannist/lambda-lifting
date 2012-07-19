@@ -200,22 +200,22 @@ checkConditions' new_up old_up old_cur isDrawn
 -- Print out State
 printState :: GameConditions -> Game GameConditions
 printState gd = get >>= \gs ->
-  liftIO $ do putStr "\ESC[H\ESC[2J"
-              printTable (bounds gs) (table gs) (waterLevel gs)
-              putStrLn ""
-              putStrLn $ "Robot is in: "      ++ (show . robotPos) gs
-              putStrLn ""
-              putStrLn $ "Water level: "      ++ (show . waterLevel) gs
-              putStrLn $ "Waterproof : "      ++ (show . waterproof . flood) gs
-              putStrLn $ "Underwater moves: " ++ (show . movesUnderWater) gs
-              putStrLn ""
-              putStrLn $ "Growth     : "      ++ (show . growth) gs
-              putStrLn $ "Beard-growth in : " ++ (show . beardRemaining) gs
-              putStrLn $ "Razors     : "      ++ (show . razors) gs
-              putStrLn "--------------------"
-              putStrLn $ "Turn       : "      ++ (show . pred . turn) gs
-              putStrLn $ "Score      : "      ++ show (getScore gd gs)
-  >> return gd
+    liftIO $ do putStr "\ESC[H\ESC[2J"
+                printTable (bounds gs) (table gs) (waterLevel gs)
+                putStrLn ""
+                putStrLn $ "Robot is in: "      ++ (show . robotPos) gs
+                putStrLn ""
+                putStrLn $ "Water level: "      ++ (show . waterLevel) gs
+                putStrLn $ "Waterproof : "      ++ (show . waterproof . flood) gs
+                putStrLn $ "Underwater moves: " ++ (show . movesUnderWater) gs
+                putStrLn ""
+                putStrLn $ "Growth     : "      ++ (show . growth) gs
+                putStrLn $ "Beard-growth in : " ++ (show . beardRemaining) gs
+                putStrLn $ "Razors     : "      ++ (show . razors) gs
+                putStrLn "--------------------"
+                putStrLn $ "Turn       : "      ++ (show . pred . turn) gs
+                putStrLn $ "Score      : "      ++ show (getScore gd gs)
+    >> return gd
   where waterLevel :: GameState -> Int
         waterLevel = water . flood
         beardRemaining :: GameState -> Int
@@ -224,9 +224,9 @@ printState gd = get >>= \gs ->
 
 printTable :: Dimension -> Table -> Int -> IO ()
 printTable (size_x,size_y) tbl waterLevel = mapM_ ppAll [size_y,size_y-1..1]
-  where isFlooded :: Int -> Bool
-        isFlooded = (>=) waterLevel
-        ppLine :: Int -> Int -> IO ()
+  where isFlooded  :: Int -> Bool
+        isFlooded  = (waterLevel >=)
+        ppLine     :: Int -> Int -> IO ()
         ppLine y x = readArray tbl (x,y) >>= putStr . showCell (isFlooded y)
-        ppAll  :: Int -> IO ()
-        ppAll y = mapM_ (ppLine y) [1..size_x] >> putStrLn ""
+        ppAll      :: Int -> IO ()
+        ppAll y    = mapM_ (ppLine y) [1..size_x] >> putStrLn ""
