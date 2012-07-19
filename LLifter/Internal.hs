@@ -38,7 +38,7 @@ initGS tbl bnds fld grth rzr =
     GS tbl bnds fld (1,1) [] (1,1) 0 [] grth rzr 1 0
 
 getScore :: GameConditions -> GameState -> Int
-getScore gc GS{turn=t,gathered=g} =
+getScore gc GS{turn = t, gathered = g} =
     let mult = case gc of
                     Playing -> 25
                     Abort   -> 50
@@ -49,69 +49,69 @@ getScore gc GS{turn=t,gathered=g} =
 putTable :: Table -> Game ()
 putTable new_table = do
     gs <- get
-    put gs{table=new_table}
+    put gs{table = new_table}
 
 putBounds :: Dimension -> Game ()
 putBounds bs = do
     gs <- get
-    put gs{bounds=bs}
+    put gs{bounds = bs}
 
 putRobotPos :: Dimension -> Game ()
 putRobotPos rp = do
     gs <- get
-    put gs{robotPos=rp}
+    put gs{robotPos = rp}
 
 putLambdas :: Dimension -> Game ()
 putLambdas l = do
-    gs@(GS{lambdas=ls}) <- get
-    put gs{lambdas=(l:ls)}
+    gs@(GS{lambdas = ls}) <- get
+    put gs{lambdas = l : ls}
 
-getLambdas :: Dimension -> Game ()
-getLambdas dim = do
-    gs@(GS{gathered=l,lambdas=ls}) <- get
+collectLambda :: Dimension -> Game ()
+collectLambda dim = do
+    gs@(GS{gathered = l, lambdas = ls}) <- get
     let ls' = List.delete dim ls
-    if length ls' == 0
-       then openLambda gs >> put gs{gathered=l+1,lambdas=ls'}
-       else put gs{lambdas=ls',gathered=l+1}
+    if null ls'
+       then openLambda gs >> put gs{gathered = l+1, lambdas = ls'}
+       else put gs{lambdas = ls', gathered = l+1}
 
 openLambda :: GameState -> Game ()
-openLambda _gs@(GS{table=tbl,exit=ext}) =
+openLambda GS{table = tbl, exit = ext} =
     liftIO $ writeArray tbl ext ollift
 
 putExit :: Dimension -> Game ()
 putExit e = do
     gs <- get
-    put gs{exit=e}
+    put gs{exit = e}
 
 putTramps :: Tramps -> Game ()
 putTramps t = do
   gs <- get
-  put gs{tramps=t}
+  put gs{tramps = t}
 
 incrTurn :: Game ()
 incrTurn = do
-  gs@(GS{turn=trn}) <- get
-  put gs{turn=succ trn}
+  gs@(GS{turn = trn}) <- get
+  put gs{turn = succ trn}
 
 incMovesUnderWater :: Game ()
 incMovesUnderWater = do
-  gs@GS{movesUnderWater=muw} <- get
-  put gs{movesUnderWater=succ muw}
+  gs@GS{movesUnderWater = muw} <- get
+  put gs{movesUnderWater = succ muw}
 
 resetMovesUnderWater :: Game ()
 resetMovesUnderWater = do
   gs <- get
-  put gs{movesUnderWater=0}
+  put gs{movesUnderWater = 0}
 
 incRazors :: Game ()
 incRazors = do
-  gs@GS{razors=r} <- get
-  put gs{razors=succ r}
+  gs@GS{razors = r} <- get
+  put gs{razors = succ r}
 
 decRazors :: Game ()
 decRazors = do
-  gs@GS{razors=r} <- get
-  put gs{razors=pred r}
+  gs@GS{razors = r} <- get
+  put gs{razors = pred r}
 
 -- ---------------------------
 -- Cells
@@ -213,7 +213,7 @@ instance Read Movement where
               tryParse ((attempt, result):xs) =
                   -- Compare the start of the string to be parsed to the
                   -- text we are looking for.
-                  if (take (length attempt) value) == attempt
+                  if take (length attempt) value == attempt
                      -- If we have a match, return the result and the
                      -- remaining input
                      then [(result, drop (length attempt) value)]
@@ -222,7 +222,7 @@ instance Read Movement where
                      else tryParse xs
 
 validMove :: Char -> Bool
-validMove = flip elem ['i', 'k', 'j', 'l', 'a', 'w', 's']
+validMove = flip elem "ikjlaws"
 
 moveTo :: Dimension -> Movement -> Dimension
 moveTo (x, y) m
@@ -251,20 +251,20 @@ defaultFlooding :: Flooding
 defaultFlooding = F 0 0 10
 
 putWater, putFlooding, putWaterProof :: Int -> Flooding -> Flooding
-putWater      w  f = f{water=w}
-putFlooding   fl f = f{flooding=fl}
-putWaterProof w  f = f{waterproof=w}
+putWater      w  f = f{water = w}
+putFlooding   fl f = f{flooding = fl}
+putWaterProof w  f = f{waterproof = w}
 
 updateWater :: Int -> Flooding -> Flooding
 updateWater trn fld@(F w f _) =
     if f > 0 && trn `mod` f == 0
-       then fld{water=w+1}
+       then fld{water = w+1}
        else fld
 
 putFlood :: Flooding -> Game ()
 putFlood fl = do
     gs <- get
-    put gs{flood=fl}
+    put gs{flood = fl}
 
 -- ---------------------------
 -- Fucking Trampolines
@@ -276,7 +276,7 @@ type TrampAssocMap = [(Trampoline, Target)]
 type Tramps = [(Dimension, Dimension)]
 
 createTramps :: TrampMap -> TargetMap -> TrampAssocMap -> Tramps
-createTramps trmap tgmap tassoc = foldl f [] tassoc
+createTramps trmap tgmap = foldl f []
     where f :: Tramps -> (Trampoline, Target) -> Tramps
           f trmps (tr, tg) =
             let dim1 = fromJust $ lookup tr trmap

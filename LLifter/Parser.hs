@@ -19,7 +19,7 @@ parser file = do
     tbl <- liftIO $ size_x `seq` size_y `seq` empty
                            `seq` newArray ((-1,-1), (size_x+1,size_y+1)) empty
     put $ initGS tbl (size_x,size_y) fld grth rzr
-    (tramp_map, target_map) <- fillMap (size_y) ([], []) contents tbl
+    (tramp_map, target_map) <- fillMap size_y ([], []) contents tbl
     putTramps $ createTramps tramp_map target_map tramp_assoc
 
 fillMap :: Int -> (TrampMap, TargetMap) -> [BS.ByteString]
@@ -85,7 +85,7 @@ getMeta fld tassoc grth rzr (l:ls)
   | BSC.null l =
       -- EOF (meaningless empty line)
       (fld, tassoc, grth, rzr)
-  | (head unp) == "Trampoline" =
+  | head unp == "Trampoline" =
       -- Must be Trampoline meta!
       let ["Trampoline", [name], "targets", [target]] = unp
           name'   = fromIntegral $ ord name
