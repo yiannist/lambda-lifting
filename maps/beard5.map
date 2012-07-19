@@ -1,0 +1,29 @@
+           ##########
+        ####..******####
+      ###..  3ABCDEF...##
+      ##                 ## 
+     ###                  ##
+    ###.....\\\...\\\.....###
+    #..     \\\ * \\\      ##
+    ##          *          ##
+     ###       ***        ##
+       #*****************##
+       ###..............##
+         ###...........##
+           ####WR..W####
+              ##L####
+               .....
+           ######  ######
+          ##1\! G##2 !\H##
+           ######  ######
+
+Trampoline A targets 1
+Trampoline B targets 1
+Trampoline C targets 1
+Trampoline D targets 1
+Trampoline E targets 1
+Trampoline F targets 1
+Trampoline G targets 2
+Trampoline H targets 3
+Growth 5
+Razors 10

@@ -1,0 +1,20 @@
+Name:              lambda-lifting
+Version:           0.0
+Description:       A visualizer for the Lambda Lifting game (ICFPC '12)
+License:           GPL
+License-file:      LICENSE
+Author:            Yiannis Tsiouris, Ilias Tsitsimpis
+Maintainer:        Yiannis Tsiouris <gtsiour@softlab.ntua.gr>
+Build-type:        Simple
+Category:          Game
+Cabal-version:     >= 1.2
+
+Executable Game
+  Main-Is:         Game.hs                        
+  Build-Depends:   base >= 4.3,
+                   array >= 0.4,
+                   transformers >= 0.3,
+                   mtl >= 2.1,
+                   bytestring >= 0.9,
+                   monad-loops >= 0.3
+  ghc-options:     -Wall -O2
