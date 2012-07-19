@@ -18,5 +18,5 @@ Then, you can start playing by:
 Authors
 =======
 
-Yiannis Tsiouris
-Ilias Tsitsimpis
+    Yiannis Tsiouris
+    Ilias Tsitsimpis
