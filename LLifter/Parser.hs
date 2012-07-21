@@ -1,4 +1,4 @@
-module LLifter.Parser (parser) where
+module LLifter.Parser (parser, parserIO) where
 
 import           Control.Monad.State
 import           Data.Array.IO
@@ -11,7 +11,7 @@ import           LLifter.Internal
 
 -- ---------------------------
 -- The parser itself
-parser :: String -> Game ()
+parser :: String -> Game GameState
 parser file = do
     contents <- liftIO $ liftM BSC.lines $ BSC.readFile file
     let ((size_x,size_y), fld, tramp_assoc, grth, rzr) =
@@ -21,6 +21,11 @@ parser file = do
     put $ initGS tbl (size_x,size_y) fld grth rzr
     (tramp_map, target_map) <- fillMap size_y ([], []) contents tbl
     putTramps $ createTramps tramp_map target_map tramp_assoc
+    get >>= return
+
+parserIO :: String -> IO GameState
+parserIO file = do
+    evalStateT (parser file) undefined
 
 fillMap :: Int -> (TrampMap, TargetMap) -> [BS.ByteString]
         -> Table -> Game (TrampMap, TargetMap)

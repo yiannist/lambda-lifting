@@ -16,5 +16,10 @@ Executable Game
                    transformers >= 0.3,
                    mtl >= 2.1,
                    bytestring >= 0.9,
-                   monad-loops >= 0.3
+                   monad-loops >= 0.3,
+                   StateVar >= 1.0,
+                   OpenGL >= 2.2,
+                   GLUT >= 2.1,
+                   graphics-drawingcombinators >= 1.1
   ghc-options:     -Wall -O2
+  extensions:      ScopedTypeVariables
