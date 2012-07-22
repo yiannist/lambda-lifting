@@ -7,8 +7,8 @@ import LLifter.Parser
 import Data.StateVar
 import Data.Array.IO
 import Data.IORef
-import Graphics.Rendering.OpenGL hiding (translate, scale)
-import Graphics.UI.GLUT hiding (translate, scale, initState)
+import Graphics.Rendering.OpenGL hiding (Color, translate, scale)
+import Graphics.UI.GLUT hiding (Color, translate, scale, initState)
 import Graphics.DrawingCombinators
  
 runGame :: String -> IO ()
@@ -36,10 +36,14 @@ runGame file = do
         elements <- getAssocs $ table state
         let makeTransform x y = translate (-1, -1) `compose` scale 2 2 `compose` scale (1/(fromIntegral width - 1)) (1/(fromIntegral height - 1))
                                 `compose` translate (x-0.5, y-0.5) `compose` scale (1/2) (1/2)
-        return $ foldl (\image ((x, y), cell) ->
+        let boardImage = foldl (\image ((x, y), cell) ->
                     if isEmpty cell then image
                     else image `mappend` (makeTransform (fromIntegral x) (fromIntegral y) %% (sprite $ (findSpriteFromCell cell) sprites))
                  ) mempty elements
+        let waterLevel = water $ flood state
+        let waterImage = translate (0, -2*(fromIntegral height - 1 - fromIntegral waterLevel)/(fromIntegral height - 1)) %%
+                         Color 0 1 1 0.5 `tint` convexPoly [(1, 1), (1, -1), (-1, -1), (-1, 1)]
+        return $ waterImage `mappend` boardImage
     let display = do
         clear [ColorBuffer]
         image <- makeImage
