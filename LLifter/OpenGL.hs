@@ -16,7 +16,7 @@ runGame file = do
     (_progname, _) <- getArgsAndInitialize
     initialDisplayMode $= [DoubleBuffered]
     initState <- parserIO file
-    _ <- createWindow "Lambda Lifter"
+    _ <- createWindow ("Lambda Lifter - " ++ file)
     sprites <- readSprites
     gameState <- newIORef initState
     gameCondition <- newIORef Playing
