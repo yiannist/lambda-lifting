@@ -8,5 +8,7 @@ import           LLifter.OpenGL
 
 main :: IO ()
 main = do
-    getArgs >>= (return . head) >>= openGLmain
-    hSetBuffering stdin NoBuffering >> getArgs >>= runGame . head
+    hSetEcho stdin True
+    hSetBuffering stdin NoBuffering
+    getArgs >>= LLifter.OpenGL.runGame . head
+    getArgs >>= LLifter.PlayGame.runGame . head

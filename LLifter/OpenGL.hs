@@ -1,22 +1,26 @@
-module LLifter.OpenGL (openGLmain) where
+module LLifter.OpenGL (runGame) where
 
 import LLifter.Internal
+import LLifter.PlayGame hiding (runGame)
 import LLifter.Parser
 
 import Data.StateVar
 import Data.Array.IO
+import Data.IORef
 import Graphics.Rendering.OpenGL hiding (translate, scale)
-import Graphics.UI.GLUT hiding (translate, scale)
+import Graphics.UI.GLUT hiding (translate, scale, initState)
 import Graphics.DrawingCombinators
  
-openGLmain :: String -> IO ()
-openGLmain file = do 
+runGame :: String -> IO ()
+runGame file = do 
     (_progname, _) <- getArgsAndInitialize
-    state <- parserIO file
+    initState <- parserIO file
     _ <- createWindow "Lambda Lifter"
     sprites <- readSprites
+    gameState <- newIORef initState
+    gameCondition <- newIORef Playing
     let reshape (Size windowWidth windowHeight) = do
-        (_, (boardWidth, boardHeight)) <- getBounds $ table state
+        (_, (boardWidth, boardHeight)) <- getBounds $ table initState
         let windowAspectRatio :: Double = fromIntegral windowWidth / fromIntegral windowHeight
         let boardAspectRatio :: Double = fromIntegral boardWidth / fromIntegral boardHeight
         let (width', height') = if boardAspectRatio > windowAspectRatio
@@ -26,6 +30,7 @@ openGLmain file = do
         viewport $= ((Position (fromIntegral ((windowWidth - width) `div` 2)) (fromIntegral ((windowHeight - height) `div` 2))), (Size width height))
     reshapeCallback $= Just reshape
     let makeImage = do
+        state <- get gameState
         (_, (width, height)) <- getBounds $ table state
         elements <- getAssocs $ table state
         let makeTransform x y = translate (-1, -1) `compose` scale 2 2 `compose` scale (1/(fromIntegral width - 1)) (1/(fromIntegral height - 1))
@@ -40,6 +45,17 @@ openGLmain file = do
         render $ image
         flush
     displayCallback $= display
+    let keyboard (Char char) Up _ _ = do
+            condition <- get gameCondition
+            if condition == Playing && validMove char then do
+                state <- get gameState
+                (condition', state') <- playGameIO state (read [char])
+                gameState $= state'
+                gameCondition $= condition'
+                postRedisplay Nothing
+            else return ()
+        keyboard _ _ _ _ = return ()
+    keyboardMouseCallback $= Just keyboard
     mainLoop
 
 

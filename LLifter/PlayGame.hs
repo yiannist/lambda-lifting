@@ -1,4 +1,4 @@
-module LLifter.PlayGame (runGame) where
+module LLifter.PlayGame (runGame, playGameIO) where
 
 import           Control.Monad             (when, unless, void)
 import           Control.Monad.Loops       (iterateWhile)
@@ -23,6 +23,9 @@ playGame :: Game GameConditions
 playGame = doMove >>= updateTable >>= printState
     where doMove = iterateWhile (not . validMove) (liftIO getChar) >>=
                    moveRobot . read . flip (:) []
+
+playGameIO :: GameState -> Movement -> IO (GameConditions, GameState)
+playGameIO gs m = evalStateT (put gs >> moveRobot m >>= updateTable >>= (gets . (,))) undefined
 
 -- ---------------------------
 -- Move our Robot
