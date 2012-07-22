@@ -14,6 +14,7 @@ import Graphics.DrawingCombinators
 runGame :: String -> IO ()
 runGame file = do 
     (_progname, _) <- getArgsAndInitialize
+    initialDisplayMode $= [DoubleBuffered]
     initState <- parserIO file
     _ <- createWindow "Lambda Lifter"
     sprites <- readSprites
@@ -43,7 +44,7 @@ runGame file = do
         clear [ColorBuffer]
         image <- makeImage
         render $ image
-        flush
+        swapBuffers
     displayCallback $= display
     let keyboard (Char char) Up _ _ = do
             condition <- get gameCondition
